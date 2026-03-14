@@ -144,6 +144,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
 .date-badge svg{width:12px;height:12px;stroke:var(--t3);fill:none;stroke-width:2}
 
 @media(max-width:640px){.kpis{grid-template-columns:1fr 1fr}.g2,.g3,.exec-grid,.ins-g{grid-template-columns:1fr}.kpi-v{font-size:22px}.exec-metric{font-size:24px}}@media(min-width:768px){.hdr-logo{width:56px;height:56px}}
+
+/* TOOLTIP SYSTEM */
+.chart-tooltip{position:fixed;background:rgba(15,23,42,.95);color:#f1f5f9;padding:12px 16px;border-radius:12px;font-size:13px;pointer-events:none;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid rgba(139,124,247,.3);backdrop-filter:blur(10px);max-width:280px;line-height:1.5;opacity:0;transition:opacity .15s}
+.chart-tooltip.show{opacity:1}
+.chart-tooltip .tt-title{font-weight:700;font-size:14px;margin-bottom:4px;color:#8B7CF7}
+.chart-tooltip .tt-row{display:flex;justify-content:space-between;gap:12px}
+.chart-tooltip .tt-label{color:#94a3b8}
+.chart-tooltip .tt-value{font-weight:600;font-family:'JetBrains Mono';color:#f1f5f9}
 </style>
 </head>
 <body>
@@ -184,7 +192,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
   <!-- TABS -->
   <div class="tabs">
     <button class="tab-btn active" onclick="showTab('exec',this)">Visão Executiva</button>
-    <button class="tab-btn" onclick="showTab('reunioes',this)">Reuniões Ao Vivo</button>
+    <button class="tab-btn" onclick="showTab('reunioes',this)">Reuniões</button>
     <button class="tab-btn" onclick="showTab('nivelamento',this)">Nivelamento</button>
     <button class="tab-btn" onclick="showTab('turmas',this)">Turmas</button>
     <button class="tab-btn" onclick="showTab('holding',this)">Holding Total</button>
@@ -199,7 +207,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="kpi-s">emails únicos em todos os eventos</div>
       </div>
       <div class="kpi">
-        <div class="kpi-l">Presença Ao Vivo <span class="help">?<span class="tt">Total de alunos (excluindo equipe/staff) que participaram das 3 reuniões ao vivo realizadas entre Set e Nov/2025. Cada reunião conta seus participantes individualmente.</span></span></div>
+        <div class="kpi-l">Presença nas Reuniões <span class="help">?<span class="tt">Total de alunos (excluindo equipe/staff) que participaram das 3 reuniões realizadas entre Set e Nov/2025. Cada reunião conta seus participantes individualmente.</span></span></div>
         <div class="kpi-v" style="color:var(--teal)">535</div>
         <div class="kpi-s">nas 3 reuniões · Set-Nov/2025</div>
       </div>
@@ -210,7 +218,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="kpi-bar"><div class="kpi-bar-fill" style="width:56.6%;background:var(--green)"></div></div>
       </div>
       <div class="kpi">
-        <div class="kpi-l">Duração Média <span class="help">?<span class="tt">Tempo médio que cada aluno ficou conectado nas reuniões ao vivo. Calculada como a média ponderada das 3 sessões (pelo número de participantes). Exclui equipe e outliers.</span></span></div>
+        <div class="kpi-l">Duração Média <span class="help">?<span class="tt">Tempo médio que cada aluno ficou conectado nas reuniões. Calculada como a média ponderada das 3 sessões (pelo número de participantes). Exclui equipe e outliers.</span></span></div>
         <div class="kpi-v" style="color:var(--amber)">78min</div>
         <div class="kpi-s">média ponderada das 3 reuniões</div>
       </div>
@@ -218,7 +226,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
 
     <div class="sec">📊 Resumo Executivo por Evento</div>
     <div class="card" style="overflow-x:auto">
-      <h3>Comparativo de Reuniões Ao Vivo <span class="help">?<span class="tt">Cada linha é uma reunião diferente. "Duração Média" é o tempo médio de permanência dos alunos. "Mediana" é o valor do meio: metade ficou mais, metade ficou menos. "Engajamento" é alto quando >70% ficaram mais de 60min.</span></span></h3>
+      <h3>Comparativo de Reuniões <span class="help">?<span class="tt">Cada linha é uma reunião diferente. "Duração Média" é o tempo médio de permanência dos alunos. "Mediana" é o valor do meio: metade ficou mais, metade ficou menos. "Engajamento" é alto quando >70% ficaram mais de 60min.</span></span></h3>
       <div class="d">Visão consolidada de presença e permanência por sessão</div>
       <table class="mini-table">
         <thead>
@@ -313,7 +321,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
       <div class="ins">
         <div class="ins-icon">📊</div>
         <div class="ins-title">Holding Total: apenas 27% de presença</div>
-        <div class="ins-desc">60 de 219 registrados fizeram check-in no evento de Mar/2026. Taxa muito baixa — benchmark para eventos pagos é acima de 60%.</div>
+        <div class="ins-desc">60 de 219 registrados fizeram check-in no evento de Mar/2026. Taxa de presença muito baixa.</div>
         <span class="ins-tag warning">Monitorar</span>
       </div>
       <div class="ins">
@@ -329,7 +337,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
   <div class="tab-content" id="tab-reunioes">
     <div class="kpis">
       <div class="kpi">
-        <div class="kpi-l">Total Participantes <span class="help">?<span class="tt">Soma dos alunos únicos que estiveram presentes nas 3 reuniões ao vivo (excluindo equipe/staff). Um aluno pode ter participado de mais de uma reunião.</span></span></div>
+        <div class="kpi-l">Total Participantes <span class="help">?<span class="tt">Soma dos alunos únicos que estiveram presentes nas 3 reuniões (excluindo equipe/staff). Um aluno pode ter participado de mais de uma reunião.</span></span></div>
         <div class="kpi-v" style="color:var(--accent)">535</div>
         <div class="kpi-s">alunos nas 3 reuniões</div>
       </div>
@@ -638,9 +646,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="kpi-s">fizeram check-in</div>
       </div>
       <div class="kpi">
-        <div class="kpi-l">Taxa de Presença <span class="help">?<span class="tt">Apenas 27% dos inscritos compareceram. Para eventos pagos, o benchmark do mercado é acima de 60%. Essa taxa indica problema sério de conversão inscrição → presença.</span></span></div>
+        <div class="kpi-l">Taxa de Presença <span class="help">?<span class="tt">27% dos inscritos compareceram.</span></span></div>
         <div class="kpi-v" style="color:var(--red)">27%</div>
-        <div class="kpi-s">muito abaixo do benchmark (60%)</div>
+        <div class="kpi-s">60 de 219 inscritos</div>
         <div class="kpi-bar"><div class="kpi-bar-fill" style="width:27%;background:var(--red)"></div></div>
       </div>
       <div class="kpi">
@@ -658,14 +666,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="donut-wrap" style="margin-top:12px">
           <svg class="donut-svg" viewBox="0 0 160 160">
             <circle cx="80" cy="80" r="60" fill="none" stroke="var(--teal)" stroke-width="20" stroke-dasharray="101.8 320" stroke-dashoffset="-240" transform="rotate(-90 80 80)"/>
-            <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(100,116,139,.3)" stroke-width="20" stroke-dasharray="275.1 320" stroke-dashoffset="-341.8" transform="rotate(-90 80 80)"/>
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#cbd5e1" stroke-width="20" stroke-dasharray="275.1 320" stroke-dashoffset="-341.8" transform="rotate(-90 80 80)"/>
             <circle cx="80" cy="80" r="40" fill="var(--donut-hole)"/>
             <text x="80" y="76" text-anchor="middle" class="donut-center">27%</text>
             <text x="80" y="92" text-anchor="middle" class="donut-center-sub">presença</text>
           </svg>
           <div class="donut-legend">
             <div class="donut-leg-item"><div class="donut-leg-dot" style="background:var(--teal)"></div>Presentes · 60 (27%)</div>
-            <div class="donut-leg-item"><div class="donut-leg-dot" style="background:rgba(100,116,139,.3)"></div>Ausentes · 159 (73%)</div>
+            <div class="donut-leg-item"><div class="donut-leg-dot" style="background:#cbd5e1"></div>Ausentes · 159 (73%)</div>
           </div>
         </div>
       </div>
@@ -716,6 +724,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
 const PWD='Marciodesa123';
 function doLogin(){const v=document.getElementById('pwdInput').value;if(v===PWD){document.getElementById('loginScreen').style.display='none';}else{document.getElementById('pwdError').style.display='block';}}
 
+// Tooltip system
+let _tip=null;
+function initTooltip(){if(!_tip){_tip=document.createElement('div');_tip.className='chart-tooltip';document.body.appendChild(_tip);}}
+function showTip(e,html){initTooltip();_tip.innerHTML=html;_tip.classList.add('show');const x=Math.min(e.clientX+14,window.innerWidth-290);const y=Math.max(e.clientY-60,8);_tip.style.left=x+'px';_tip.style.top=y+'px';}
+function hideTip(){if(_tip)_tip.classList.remove('show');}
+function hbarTip(e,el){const l=el.dataset.hlbl,c=el.dataset.hcnt,p=el.dataset.hpct;let h='<div class="tt-title">'+l+'</div><div class="tt-row"><span class="tt-label">Quantidade:</span><span class="tt-value">'+c+'</span></div>';if(p)h+='<div class="tt-row"><span class="tt-label">% do total:</span><span class="tt-value">'+p+'</span></div>';showTip(e,h);}
+
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
@@ -729,6 +744,89 @@ function showTab(id,btn){
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
+
+// Add tooltips to KPIs
+document.querySelectorAll('.kpi').forEach(k=>{
+  const l=k.querySelector('.kpi-l');
+  const v=k.querySelector('.kpi-v');
+  const s=k.querySelector('.kpi-s');
+  if(l&&v){
+    const lbl=l.textContent.replace(/\?.*$/,'').trim();
+    const val=v.textContent.trim();
+    const sub=s?s.textContent.trim():'';
+    k.style.cursor='pointer';
+    k.onmouseenter=k.onmousemove=function(e){
+      let h='<div class="tt-title">'+lbl+'</div><div class="tt-row"><span class="tt-label">Valor:</span><span class="tt-value">'+val+'</span></div>';
+      if(sub)h+='<div class="tt-row"><span class="tt-label">Detalhe:</span><span class="tt-value">'+sub+'</span></div>';
+      showTip(e,h);
+    };
+    k.onmouseleave=hideTip;
+  }
+});
+
+// Add tooltips to horizontal bars
+document.querySelectorAll('.hbar').forEach(bar=>{
+  const label=bar.querySelector('.hbar-label');
+  const fill=bar.querySelector('.hbar-fill');
+  const val=bar.querySelector('.hbar-val');
+  if(label&&fill){
+    const lbl=label.textContent.trim();
+    const cnt=fill.textContent.trim();
+    const v=val?val.textContent.trim():cnt;
+    bar.style.cursor='pointer';
+    bar.onmouseenter=bar.onmousemove=function(e){
+      showTip(e,'<div class="tt-title">'+lbl+'</div><div class="tt-row"><span class="tt-label">Quantidade:</span><span class="tt-value">'+v+'</span></div>');
+    };
+    bar.onmouseleave=hideTip;
+  }
+});
+
+// Add tooltips to stacked bar segments
+document.querySelectorAll('.stacked-seg').forEach(seg=>{
+  seg.style.cursor='pointer';
+  seg.onmouseenter=seg.onmousemove=function(e){
+    showTip(e,'<div class="tt-title">'+seg.textContent.trim()+'</div>');
+  };
+  seg.onmouseleave=hideTip;
+});
+
+// Add tooltips to donut chart
+document.querySelectorAll('.donut-svg').forEach(svg=>{
+  svg.style.cursor='pointer';
+  const wrap=svg.closest('.donut-wrap');
+  if(wrap){
+    const items=wrap.querySelectorAll('.donut-leg-item');
+    let h='<div class="tt-title">Distribuição</div>';
+    items.forEach(item=>{h+='<div class="tt-row"><span class="tt-label">'+item.textContent.trim()+'</span></div>';});
+    svg.onmouseenter=svg.onmousemove=function(e){showTip(e,h);};
+    svg.onmouseleave=hideTip;
+  }
+});
+
+// Add tooltips to table rows
+document.querySelectorAll('table.exec-table tbody tr').forEach(tr=>{
+  tr.style.cursor='pointer';
+  tr.onmouseenter=tr.onmousemove=function(e){
+    const cells=tr.querySelectorAll('td');
+    if(cells.length>=2){
+      let h='<div class="tt-title">'+cells[0].textContent.trim()+'</div>';
+      const ths=tr.closest('table').querySelectorAll('th');
+      for(let i=1;i<cells.length&&i<ths.length;i++){
+        h+='<div class="tt-row"><span class="tt-label">'+ths[i].textContent.trim()+':</span><span class="tt-value">'+cells[i].textContent.trim()+'</span></div>';
+      }
+      showTip(e,h);
+    }
+  };
+  tr.onmouseleave=hideTip;
+});
+
+// Add tooltips to cards
+document.querySelectorAll('.card').forEach(c=>{
+  const h3=c.querySelector('h3');
+  if(h3){
+    c.style.cursor='pointer';
+  }
+});
 
 </script>
 </body>
