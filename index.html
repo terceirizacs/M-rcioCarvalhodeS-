@@ -388,22 +388,22 @@ function renderAll(rows){
   h2+='</div></div>';
   h2+='</div>';
 
-  // GPS por Turma (Holding Master)
-  const hmRows=rows.filter(r=>r.nivel==='Holding Masters'||r.nivel==='Holding Masters (novos)');
-  if(hmRows.length>0){
+  // GPS
+  const totalGPS=rows.filter(r=>r.temGPS).length;const pctGPS=rows.length>0?rd(totalGPS/rows.length*100):0;
+  if(totalGPS>0){
     const gpsTurma={};
-    hmRows.forEach(r=>{const t=r.turma||'Sem turma';if(!gpsTurma[t])gpsTurma[t]={total:0,gps:0};gpsTurma[t].total++;if(r.temGPS)gpsTurma[t].gps++;});
-    const gpsKeys=Object.keys(gpsTurma).sort((a,b)=>{const na=parseInt(a.replace(/\D/g,'')),nb=parseInt(b.replace(/\D/g,''));return(isNaN(na)?999:na)-(isNaN(nb)?999:nb);});
-    const totalGPS=hmRows.filter(r=>r.temGPS).length;const pctGPS=hmRows.length>0?rd(totalGPS/hmRows.length*100):0;
-    h2+='<div class="sec">GPS — Holding Master</div>';
-    h2+='<div class="g2"><div class="card"><h3>GPS por Turma</h3><div class="d">'+fmtN(totalGPS)+' de '+fmtN(hmRows.length)+' alunos fizeram GPS ('+fmtP(pctGPS)+')</div><div class="hbar-area" style="height:auto;gap:14px">';
-    gpsKeys.forEach(t=>{const g=gpsTurma[t];const pct=g.total>0?rd(g.gps/g.total*100):0;const w=Math.max(pct,1);const txt=g.gps+'/'+g.total+' ('+fmtP(pct)+')';
-      h2+='<div class="hbar-row"><span class="hbar-lbl">'+t+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+w+'%;background:var(--accent)">'+(w>20?txt:'')+'</div></div>'+(w<=20?'<span style="font-size:11px;font-weight:700;font-family:JetBrains Mono;color:var(--t2);margin-left:8px;white-space:nowrap">'+txt+'</span>':'')+'</div>';
-    });
-    h2+='</div></div>';
+    rows.forEach(r=>{if(!r.temGPS)return;const t=r.turma||'Sem turma';gpsTurma[t]=(gpsTurma[t]||0)+1;});
+    const gpsKeys=Object.keys(gpsTurma).sort((a,b)=>gpsTurma[b]-gpsTurma[a]);
+    h2+='<div class="sec">GPS</div>';
+    h2+='<div class="g2">';
     const degGPS=Math.round(pctGPS/100*360);
-    h2+='<div class="card"><h3>Adesão ao GPS</h3><div class="d">Holding Master</div><div class="donut-area">'+donutHTML('var(--accent)',degGPS,'var(--t3)',fmtP(pctGPS),'fizeram GPS','Com GPS',fmtN(totalGPS),'var(--accent)','Sem GPS',fmtN(hmRows.length-totalGPS),'var(--t3)')+'</div></div>';
-    h2+='</div>';
+    h2+='<div class="card"><h3>Adesão ao GPS</h3><div class="d">'+fmtN(totalGPS)+' de '+fmtN(rows.length)+' alunos (todos os produtos)</div><div class="donut-area">'+donutHTML('var(--accent)',degGPS,'var(--t3)',fmtP(pctGPS),'fizeram GPS','Com GPS',fmtN(totalGPS),'var(--accent)','Sem GPS',fmtN(rows.length-totalGPS),'var(--t3)')+'</div></div>';
+    h2+='<div class="card"><h3>Turmas com GPS</h3><div class="d">Apenas turmas que preencheram</div><div class="hbar-area" style="height:auto;gap:14px">';
+    const mxGT=Math.max(...gpsKeys.map(k=>gpsTurma[k]),1);
+    gpsKeys.forEach(t=>{const q=gpsTurma[t];const w=Math.max(Math.round(q/mxGT*100),2);
+      h2+='<div class="hbar-row"><span class="hbar-lbl">'+t+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+w+'%;background:var(--accent)">'+q+' alunos</div></div></div>';
+    });
+    h2+='</div></div></div>';
   }
 
   // Análise de Acesso
