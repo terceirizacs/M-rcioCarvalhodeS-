@@ -52,7 +52,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
 .filter-clear:hover{border-color:var(--red);color:var(--red)}
 .filter-apply{background:var(--accent);border:none;color:#fff;font-family:'Inter';font-size:13px;font-weight:600;padding:8px 22px;border-radius:10px;cursor:pointer;box-shadow:0 2px 12px rgba(139,124,247,.25);transition:all .2s}
 .filter-apply:hover{filter:brightness(1.15)}
-.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.filter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .filter-group{display:flex;flex-direction:column;gap:6px}
 .filter-label{font-size:12px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
 .active-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -61,7 +61,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
 .filter-tag .x{width:16px;height:16px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer}
 .filter-tag .x:hover{background:rgba(248,113,113,.3);color:var(--red)}
 .results-badge{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.2);color:var(--teal);font-size:13px;font-family:'JetBrains Mono';font-weight:500;padding:8px 18px;border-radius:10px;margin-left:auto}
-.filter-date{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--t1);font-family:'Inter';font-size:14px;padding:12px 16px;border-radius:12px;outline:none}
+.filter-date{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:var(--t1);font-family:'Inter';font-size:13px;padding:10px 12px;border-radius:12px;outline:none;box-sizing:border-box}
 .filter-date:focus{border-color:var(--accent)}
 .filter-date::-webkit-calendar-picker-indicator{filter:invert(.6)}
 .filter-date-row{display:flex;gap:10px}
@@ -387,6 +387,24 @@ function renderAll(rows){
   });
   h2+='</div></div>';
   h2+='</div>';
+
+  // GPS por Turma (Holding Master)
+  const hmRows=rows.filter(r=>r.nivel==='Holding Masters'||r.nivel==='Holding Masters (novos)');
+  if(hmRows.length>0){
+    const gpsTurma={};
+    hmRows.forEach(r=>{const t=r.turma||'Sem turma';if(!gpsTurma[t])gpsTurma[t]={total:0,gps:0};gpsTurma[t].total++;if(r.temGPS)gpsTurma[t].gps++;});
+    const gpsKeys=Object.keys(gpsTurma).sort((a,b)=>{const na=parseInt(a.replace(/\D/g,'')),nb=parseInt(b.replace(/\D/g,''));return(isNaN(na)?999:na)-(isNaN(nb)?999:nb);});
+    const totalGPS=hmRows.filter(r=>r.temGPS).length;const pctGPS=hmRows.length>0?rd(totalGPS/hmRows.length*100):0;
+    h2+='<div class="sec">GPS — Holding Master</div>';
+    h2+='<div class="g2"><div class="card"><h3>GPS por Turma</h3><div class="d">'+fmtN(totalGPS)+' de '+fmtN(hmRows.length)+' alunos fizeram GPS ('+fmtP(pctGPS)+')</div><div class="hbar-area" style="height:auto;gap:14px">';
+    gpsKeys.forEach(t=>{const g=gpsTurma[t];const pct=g.total>0?rd(g.gps/g.total*100):0;const w=Math.max(pct,1);const txt=g.gps+'/'+g.total+' ('+fmtP(pct)+')';
+      h2+='<div class="hbar-row"><span class="hbar-lbl">'+t+'</span><div class="hbar-track"><div class="hbar-fill" style="width:'+w+'%;background:var(--accent)">'+(w>20?txt:'')+'</div></div>'+(w<=20?'<span style="font-size:11px;font-weight:700;font-family:JetBrains Mono;color:var(--t2);margin-left:8px;white-space:nowrap">'+txt+'</span>':'')+'</div>';
+    });
+    h2+='</div></div>';
+    const degGPS=Math.round(pctGPS/100*360);
+    h2+='<div class="card"><h3>Adesão ao GPS</h3><div class="d">Holding Master</div><div class="donut-area">'+donutHTML('var(--accent)',degGPS,'var(--t3)',fmtP(pctGPS),'fizeram GPS','Com GPS',fmtN(totalGPS),'var(--accent)','Sem GPS',fmtN(hmRows.length-totalGPS),'var(--t3)')+'</div></div>';
+    h2+='</div>';
+  }
 
   // Análise de Acesso
   h2+='<div class="sec">Análise de Acesso</div>';
