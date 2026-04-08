@@ -388,19 +388,18 @@ function renderAll(rows){
   h2+='</div></div>';
   h2+='</div>';
 
-  // GPS (alunos únicos)
-  const gpsEmailMap={};
-  rows.forEach(r=>{if(!r.email)return;if(!gpsEmailMap[r.email])gpsEmailMap[r.email]={gps:false,turma:r.turma||'Sem turma'};if(r.temGPS)gpsEmailMap[r.email].gps=true;if(r.turma)gpsEmailMap[r.email].turma=r.turma;});
-  const gpsEmails=Object.values(gpsEmailMap);const totalUnicosGPS=gpsEmails.filter(e=>e.gps).length;const totalUnicos=gpsEmails.length;
-  const pctGPS=totalUnicos>0?rd(totalUnicosGPS/totalUnicos*100):0;
-  if(totalUnicosGPS>0){
+  // GPS (direto da aba GPS)
+  const totalGPSReal=GPS_SET.size;
+  const totalUnicosBase=emailsUnicos.size;
+  const pctGPS=totalUnicosBase>0?rd(totalGPSReal/totalUnicosBase*100):0;
+  if(totalGPSReal>0){
     const gpsTurma={};
-    gpsEmails.forEach(e=>{if(!e.gps)return;const t=e.turma||'Sem turma';gpsTurma[t]=(gpsTurma[t]||0)+1;});
+    RAW.gps.forEach(g=>{if(!g[G.EMAIL])return;const email=g[G.EMAIL];const turmaMatch=rows.find(r=>r.email===email&&r.turma);const t=turmaMatch?turmaMatch.turma:'Sem turma';gpsTurma[t]=(gpsTurma[t]||0)+1;});
     const gpsKeys=Object.keys(gpsTurma).sort((a,b)=>gpsTurma[b]-gpsTurma[a]);
     h2+='<div class="sec">GPS</div>';
     h2+='<div class="g2">';
     const degGPS=Math.round(pctGPS/100*360);
-    h2+='<div class="card"><h3>Adesão ao GPS</h3><div class="d">'+fmtN(totalUnicosGPS)+' de '+fmtN(totalUnicos)+' alunos únicos</div><div class="donut-area">'+donutHTML('var(--accent)',degGPS,'var(--t3)',fmtP(pctGPS),'fizeram GPS','Com GPS',fmtN(totalUnicosGPS),'var(--accent)','Sem GPS',fmtN(totalUnicos-totalUnicosGPS),'var(--t3)')+'</div></div>';
+    h2+='<div class="card"><h3>Adesão ao GPS</h3><div class="d">'+fmtN(totalGPSReal)+' preencheram (aba GPS) · '+fmtN(totalUnicosBase)+' alunos únicos</div><div class="donut-area">'+donutHTML('var(--accent)',degGPS,'var(--t3)',fmtP(pctGPS),'fizeram GPS','Com GPS',fmtN(totalGPSReal),'var(--accent)','Sem GPS',fmtN(totalUnicosBase-totalGPSReal),'var(--t3)')+'</div></div>';
     h2+='<div class="card"><h3>Turmas com GPS</h3><div class="d">Apenas turmas que preencheram</div><div class="hbar-area" style="height:auto;gap:14px">';
     const mxGT=Math.max(...gpsKeys.map(k=>gpsTurma[k]),1);
     gpsKeys.forEach(t=>{const q=gpsTurma[t];const w=Math.max(Math.round(q/mxGT*100),2);
