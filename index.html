@@ -381,9 +381,10 @@ function renderAll(rows){
     h2+='<div class="hbar-row"><span class="hbar-lbl">Média Assistida</span><div class="hbar-track"><div class="hbar-fill" style="width:'+aulaW.toFixed(0)+'%;background:var(--teal)">'+(aulaW>20?aulaTxt:'')+'</div></div>'+(aulaW<=20?'<span style="font-size:11px;font-weight:700;font-family:JetBrains Mono;color:var(--t2);margin-left:8px;white-space:nowrap">'+aulaTxt+'</span>':'')+'</div>';
   });
   h2+='</div></div>';
+  h2+='</div>';
 
   // Análise de Acesso
-  h2+='<div class="sec">Análise de Acesso</div><div class="d" style="margin:-8px 0 16px;color:var(--t3);font-size:13px">Tempo entre compra e primeiro acesso</div>';
+  h2+='<div class="sec">Análise de Acesso</div>';
   const actDiffs=[];let actNever=0;
   rows.forEach(r=>{if(!r.primAcesso){actNever++;return;}if(!r.dtCompra)return;const diff=Math.floor((r.primAcesso-r.dtCompra)/86400000);if(diff<0)return;actDiffs.push(diff);});
   const actValid=actDiffs.length;const actD0=actDiffs.filter(d=>d===0).length;const actD1=actDiffs.filter(d=>d===1).length;const actD2=actDiffs.filter(d=>d>=2).length;

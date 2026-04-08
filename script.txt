@@ -1,0 +1,177 @@
+// ============================================================
+// DASHBOARD CS — Márcio Carvalho de Sá | Terceiriza CS
+// Lê: planilha cs, planilha thb, planilha mcc, GPS
+// ============================================================
+
+function toTs(v) {
+  if (v instanceof Date) return v.getTime();
+  if (typeof v === 'number' && v > 40000) return (v - 25569) * 86400000;
+  if (typeof v === 'string') {
+    var d = new Date(v);
+    return isNaN(d.getTime()) ? null : d.getTime();
+  }
+  return null;
+}
+
+function safeTrim(v) {
+  return (v === null || v === undefined) ? '' : String(v).trim();
+}
+
+function col(row, i) {
+  return i < row.length ? row[i] : '';
+}
+
+function num(v) {
+  if (v === '' || v === null || v === undefined) return 0;
+  var n = Number(v);
+  return isNaN(n) ? 0 : n;
+}
+
+// ── planilha cs ──────────────────────────────────────────────
+function lerCS() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('planilha cs');
+  if (!sh) return [];
+  var data = sh.getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    var nome = (safeTrim(col(r, 1)) + ' ' + safeTrim(col(r, 2))).trim();
+    if (!nome) continue;
+    rows.push([
+      safeTrim(col(r, 0)),                    // 0  evento
+      nome,                                    // 1  nome
+      safeTrim(col(r, 3)).toLowerCase(),       // 2  email
+      safeTrim(col(r, 5)),                     // 3  produto
+      num(col(r, 14)),                         // 4  progresso
+      num(col(r, 15)),                         // 5  aulasComp
+      num(col(r, 16)),                         // 6  totalAulas
+      toTs(col(r, 17)),                        // 7  primAcessoTs
+      toTs(col(r, 18)),                        // 8  ultAcessoTs
+      num(col(r, 19)),                         // 9  qtdAcessos
+      toTs(col(r, 20)),                        // 10 dtCompraTs
+      safeTrim(col(r, 24)),                    // 11 statusClub
+      safeTrim(col(r, 30)) || safeTrim(col(r, 29))  // 12 funil (calculado ou manual)
+    ]);
+  }
+  return rows;
+}
+
+// ── planilha thb ─────────────────────────────────────────────
+function lerTHB() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('planilha thb');
+  if (!sh) return [];
+  var data = sh.getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    var nome = (safeTrim(col(r, 1)) + ' ' + safeTrim(col(r, 2))).trim();
+    if (!nome) continue;
+    rows.push([
+      nome,                                    // 0  nome
+      safeTrim(col(r, 3)).toLowerCase(),       // 1  email
+      safeTrim(col(r, 5)),                     // 2  turma
+      safeTrim(col(r, 9)),                     // 3  nivel
+      num(col(r, 14)),                         // 4  aulasComp
+      num(col(r, 15)),                         // 5  totalAulas
+      num(col(r, 16)),                         // 6  presenca
+      num(col(r, 17)),                         // 7  conclusao
+      num(col(r, 18)),                         // 8  qtdAcessos
+      toTs(col(r, 19)),                        // 9  primAcessoTs
+      toTs(col(r, 20)),                        // 10 ultAcessoTs
+      safeTrim(col(r, 23)),                    // 11 funil (coluna X)
+      safeTrim(col(r, 22)),                    // 12 status (coluna W)
+      toTs(col(r, 6)),                         // 13 dtCompraTs
+      toTs(col(r, 7))                          // 14 dtVencimentoTs
+    ]);
+  }
+  return rows;
+}
+
+// ── planilha mcc ─────────────────────────────────────────────
+function lerMCC() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('planilha mcc');
+  if (!sh) return [];
+  var data = sh.getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    var nome = (safeTrim(col(r, 1)) + ' ' + safeTrim(col(r, 2))).trim();
+    if (!nome) continue;
+    rows.push([
+      nome,                                    // 0  nome
+      safeTrim(col(r, 3)).toLowerCase(),       // 1  email
+      safeTrim(col(r, 5)),                     // 2  turma
+      safeTrim(col(r, 9)),                     // 3  nivel
+      num(col(r, 14)),                         // 4  aulasComp
+      num(col(r, 15)),                         // 5  totalAulas
+      num(col(r, 16)),                         // 6  presenca
+      num(col(r, 17)),                         // 7  conclusao
+      num(col(r, 18)),                         // 8  qtdAcessos
+      toTs(col(r, 19)),                        // 9  primAcessoTs
+      toTs(col(r, 20)),                        // 10 ultAcessoTs
+      safeTrim(col(r, 23)),                    // 11 funil (coluna X)
+      safeTrim(col(r, 22)),                    // 12 status (coluna W)
+      toTs(col(r, 6)),                         // 13 dtCompraTs
+      toTs(col(r, 7))                          // 14 dtVencimentoTs
+    ]);
+  }
+  return rows;
+}
+
+// ── GPS ──────────────────────────────────────────────────────
+function lerGPS() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('GPS');
+  if (!sh) return [];
+  var data = sh.getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    var nome = safeTrim(col(r, 0));
+    if (!nome) continue;
+    rows.push([
+      nome,                                    // 0  nome
+      safeTrim(col(r, 2)).toLowerCase(),       // 1  email
+      safeTrim(col(r, 3)),                     // 2  assunto
+      toTs(col(r, 5))                          // 3  dataTs
+    ]);
+  }
+  return rows;
+}
+
+// ── doGet ────────────────────────────────────────────────────
+function doGet(e) {
+  try {
+    var today = new Date();
+    var payload = {
+      cs: lerCS(),
+      thb: lerTHB(),
+      mcc: lerMCC(),
+      gps: lerGPS(),
+      todayMs: today.getTime(),
+      atualizado: Utilities.formatDate(today, 'America/Sao_Paulo', 'dd/MM/yyyy HH:mm')
+    };
+    return ContentService
+      .createTextOutput(JSON.stringify(payload))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ── Teste ────────────────────────────────────────────────────
+function testarDashboard() {
+  var cs  = lerCS();
+  var thb = lerTHB();
+  var mcc = lerMCC();
+  var gps = lerGPS();
+  Logger.log('CS : ' + cs.length + ' linhas');
+  Logger.log('THB: ' + thb.length + ' linhas');
+  Logger.log('MCC: ' + mcc.length + ' linhas');
+  Logger.log('GPS: ' + gps.length + ' linhas');
+  Logger.log('Exemplo CS : ' + JSON.stringify(cs[0]));
+  Logger.log('Exemplo THB: ' + JSON.stringify(thb[0]));
+  Logger.log('Exemplo MCC: ' + JSON.stringify(mcc[0]));
+  Logger.log('Exemplo GPS: ' + JSON.stringify(gps[0]));
+}
