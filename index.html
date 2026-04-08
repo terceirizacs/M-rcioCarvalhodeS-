@@ -220,6 +220,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);min-hei
     <div class="filter-grid">
       <div class="filter-group"><label class="filter-label">Produto (Nivel)</label><div class="ms-wrap" id="fNivel"></div></div>
       <div class="filter-group"><label class="filter-label">Funil</label><div class="ms-wrap" id="fFunil"></div></div>
+      <div class="filter-group"><label class="filter-label">Turma</label><div class="ms-wrap" id="fTurma"></div></div>
       <div class="filter-group"><label class="filter-label">Data de Compra</label><div class="filter-date-row"><input type="date" class="filter-date" id="fDe"><input type="date" class="filter-date" id="fAte"></div></div>
     </div>
     <div class="active-filters" id="tagsArea"><div class="filter-tag neutral">Nenhum filtro ativo</div></div>
@@ -249,11 +250,11 @@ const moda=arr=>{if(!arr.length)return 0;const c={};arr.forEach(v=>c[v]=(c[v]||0
 const funilOrder=['Nunca acessou','Consumiu pouco','Desengajado','Engajado','Verificar','Acessou mas nao consumiu'];
 const funilColors=['var(--red)','var(--gold)','var(--orange)','var(--teal)','var(--sky)','var(--pink)'];
 const funilBg=['rgba(248,113,113,.12)','rgba(251,191,36,.12)','rgba(251,146,60,.12)','rgba(45,212,191,.12)','rgba(56,189,248,.12)','rgba(244,114,182,.12)'];
-const nivelColors={'Holding Masters':'var(--accent)','Holding Masters (novos)':'var(--a2)','Aurum':'var(--gold)','Platina':'var(--sky)','Diamante':'var(--cyan)','ETHB':'var(--green)','clinica':'var(--pink)','mentoria de captacao de clientes':'var(--teal)','PA1':'var(--orange)','LIMITED':'var(--red)','EXCLUIR-AURUM26':'var(--t3)'};
+const nivelColors={'Holding Masters':'var(--accent)','Holding Masters (novos)':'var(--a2)','Aurum':'var(--gold)','Platina':'var(--sky)','Diamante':'var(--cyan)','ETHB':'var(--green)','clinica':'var(--pink)','mentoria de captacao de clientes':'var(--teal)','Mentoria de Captacao de Clientes':'var(--teal)','PA1':'var(--orange)','LIMITED':'var(--red)','EXCLUIR-AURUM26':'var(--t3)'};
 function nivelColor(n){return nivelColors[n]||'var(--t2)';}
 const progOrder=['0','1-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','81-90','91-100'];
 const progColors=['var(--red)','var(--pink)','var(--orange)','var(--gold)','var(--sky)','var(--cyan)','var(--teal)','var(--green)','var(--accent)','var(--a2)','#fff'];
-const mainNiveis=['Holding Masters','Holding Masters (novos)','Aurum','Diamante','Platina'];
+const mainNiveis=['Holding Masters','Holding Masters (novos)','Aurum','Diamante','Platina','Mentoria de Captacao de Clientes'];
 function togglePwd(){const i=document.getElementById('pwdInput');i.type=i.type==='password'?'text':'password';}
 function doLogin(){if(document.getElementById('pwdInput').value===PWD){document.getElementById('loginScreen').style.display='none';loadData();}else{document.getElementById('pwdError').style.display='block';}}
 function toggleTheme(){const h=document.documentElement;const d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('btnDark').classList.toggle('active',!d);document.getElementById('btnLight').classList.toggle('active',d);}
@@ -268,9 +269,9 @@ document.addEventListener('click',e=>{if(!e.target.closest('.ms-wrap'))document.
 function kpiCard(bg,label,value,sub,color){return'<div class="kpi"><div class="kpi-bar" style="background:'+bg+'"></div><div class="kpi-l">'+label+'</div><div class="kpi-v" style="color:'+color+'">'+value+'</div>'+(sub?'<div class="kpi-s">'+sub+'</div>':'')+'</div>';}
 function donutHTML(c1,deg,c2,cVal,cLbl,l1,n1,lc1,l2,n2,lc2){return'<div class="donut-ring" style="background:conic-gradient('+c1+' 0deg '+deg+'deg,'+c2+' '+deg+'deg 360deg)"><div style="width:120px;height:120px;background:var(--donut-hole);border-radius:50%;display:flex;align-items:center;justify-content:center"><div class="donut-center"><div class="donut-v" style="color:'+c1+'">'+cVal+'</div><div class="donut-sub">'+cLbl+'</div></div></div></div><div class="donut-legend"><span><i style="background:'+lc1+'"></i>'+l1+': '+n1+'</span><span><i style="background:'+lc2+'"></i>'+l2+': '+n2+'</span></div>';}
 function multiDonut(data,colors){const total=Object.values(data).reduce((a,b)=>a+b,0);if(!total)return'<div style="color:var(--t3)">Sem dados</div>';let grad='',leg='',deg=0;const keys=Object.keys(data).sort((a,b)=>data[b]-data[a]);keys.forEach(k=>{const pct=data[k]/total*100;const d=Math.round(pct/100*360);const c=colors[k]||'var(--t3)';grad+=c+' '+deg+'deg '+(deg+d)+'deg,';leg+='<span><i style="background:'+c+'"></i>'+k+' ('+data[k]+')</span>';deg+=d;});grad=grad.slice(0,-1);return'<div class="donut-ring" style="background:conic-gradient('+grad+')"><div style="width:120px;height:120px;background:var(--donut-hole);border-radius:50%;display:flex;align-items:center;justify-content:center"><div class="donut-center"><div class="donut-v">'+fmtN(total)+'</div><div class="donut-sub">alunos</div></div></div></div><div class="donut-legend">'+leg+'</div>';}
-function mergeData(){MERGED=[];GPS_SET=new Set();RAW.gps.forEach(g=>{if(g[G.EMAIL])GPS_SET.add(g[G.EMAIL]);});RAW.thb.forEach(r=>{if(!r[T.NOME])return;MERGED.push({nome:r[T.NOME],email:r[T.EMAIL],turma:r[T.TURMA],nivel:r[T.NIVEL],aulasComp:r[T.AULAS_COMP],totalAulas:r[T.TOTAL_AULAS],presenca:r[T.PRESENCA],conclusao:r[T.CONCLUSAO],qtdAcessos:r[T.QTD_ACESSOS],primAcesso:r[T.PRIM_ACESSO],ultAcesso:r[T.ULT_ACESSO],funil:r[T.FUNIL],motivo:r[T.MOTIVO],dtCompra:r[T.DT_COMPRA],dtVenc:r[T.DT_VENC],fonte:'THB',temGPS:GPS_SET.has(r[T.EMAIL])});});RAW.mcc.forEach(r=>{if(!r[T.NOME])return;MERGED.push({nome:r[T.NOME],email:r[T.EMAIL],turma:r[T.TURMA],nivel:r[T.NIVEL],aulasComp:r[T.AULAS_COMP],totalAulas:r[T.TOTAL_AULAS],presenca:r[T.PRESENCA],conclusao:r[T.CONCLUSAO],qtdAcessos:r[T.QTD_ACESSOS],primAcesso:r[T.PRIM_ACESSO],ultAcesso:r[T.ULT_ACESSO],funil:r[T.FUNIL],motivo:r[T.MOTIVO],dtCompra:r[T.DT_COMPRA],dtVenc:r[T.DT_VENC],fonte:'MCC',temGPS:GPS_SET.has(r[T.EMAIL])});});}
-function getFilteredRows(){const fn=getMS('fNivel'),ff=getMS('fFunil');const de=document.getElementById('fDe').value?new Date(document.getElementById('fDe').value).getTime():null;const ate=document.getElementById('fAte').value?new Date(document.getElementById('fAte').value+'T23:59:59').getTime():null;return MERGED.filter(r=>{if(fn.length&&!fn.includes(r.nivel))return false;if(ff.length&&!ff.includes(r.funil))return false;if(de&&r.dtCompra&&r.dtCompra<de)return false;if(ate&&r.dtCompra&&r.dtCompra>ate)return false;return true;});}
-function applyFilters(){const rows=getFilteredRows();const tags=[];getMS('fNivel').forEach(v=>tags.push(v));getMS('fFunil').forEach(v=>tags.push(v));if(document.getElementById('fDe').value)tags.push('De: '+document.getElementById('fDe').value);if(document.getElementById('fAte').value)tags.push('Ate: '+document.getElementById('fAte').value);const area=document.getElementById('tagsArea');if(!tags.length)area.innerHTML='<div class="filter-tag neutral">Nenhum filtro ativo</div>';else area.innerHTML=tags.map(t=>'<div class="filter-tag">'+t+' <span class="x" onclick="this.parentElement.remove()">x</span></div>').join('')+'<span class="results-badge">'+fmtN(rows.length)+' registros</span>';renderAll(rows);}
+function mergeData(){MERGED=[];GPS_SET=new Set();RAW.gps.forEach(g=>{if(g[G.EMAIL])GPS_SET.add(g[G.EMAIL]);});RAW.thb.forEach(r=>{if(!r[T.NOME])return;MERGED.push({nome:r[T.NOME],email:r[T.EMAIL],turma:r[T.TURMA],nivel:r[T.NIVEL],aulasComp:r[T.AULAS_COMP],totalAulas:r[T.TOTAL_AULAS],presenca:r[T.PRESENCA],conclusao:r[T.CONCLUSAO],qtdAcessos:r[T.QTD_ACESSOS],primAcesso:r[T.PRIM_ACESSO],ultAcesso:r[T.ULT_ACESSO],funil:r[T.FUNIL],motivo:r[T.MOTIVO],dtCompra:r[T.DT_COMPRA],dtVenc:r[T.DT_VENC],fonte:'THB',temGPS:GPS_SET.has(r[T.EMAIL])});});RAW.mcc.forEach(r=>{if(!r[T.NOME])return;MERGED.push({nome:r[T.NOME],email:r[T.EMAIL],turma:r[T.TURMA],nivel:'Mentoria de Captacao de Clientes',aulasComp:r[T.AULAS_COMP],totalAulas:r[T.TOTAL_AULAS],presenca:r[T.PRESENCA],conclusao:r[T.CONCLUSAO],qtdAcessos:r[T.QTD_ACESSOS],primAcesso:r[T.PRIM_ACESSO],ultAcesso:r[T.ULT_ACESSO],funil:r[T.FUNIL],motivo:r[T.MOTIVO],dtCompra:r[T.DT_COMPRA],dtVenc:r[T.DT_VENC],fonte:'MCC',temGPS:GPS_SET.has(r[T.EMAIL])});});}
+function getFilteredRows(){const fn=getMS('fNivel'),ff=getMS('fFunil'),ft=getMS('fTurma');const de=document.getElementById('fDe').value?new Date(document.getElementById('fDe').value).getTime():null;const ate=document.getElementById('fAte').value?new Date(document.getElementById('fAte').value+'T23:59:59').getTime():null;return MERGED.filter(r=>{if(fn.length&&!fn.includes(r.nivel))return false;if(ff.length&&!ff.includes(r.funil))return false;if(ft.length&&!ft.includes(r.turma))return false;if(de&&r.dtCompra&&r.dtCompra<de)return false;if(ate&&r.dtCompra&&r.dtCompra>ate)return false;return true;});}
+function applyFilters(){const rows=getFilteredRows();const tags=[];getMS('fNivel').forEach(v=>tags.push(v));getMS('fFunil').forEach(v=>tags.push(v));getMS('fTurma').forEach(v=>tags.push(v));if(document.getElementById('fDe').value)tags.push('De: '+document.getElementById('fDe').value);if(document.getElementById('fAte').value)tags.push('Ate: '+document.getElementById('fAte').value);const area=document.getElementById('tagsArea');if(!tags.length)area.innerHTML='<div class="filter-tag neutral">Nenhum filtro ativo</div>';else area.innerHTML=tags.map(t=>'<div class="filter-tag">'+t+' <span class="x" onclick="this.parentElement.remove()">x</span></div>').join('')+'<span class="results-badge">'+fmtN(rows.length)+' registros</span>';renderAll(rows);}
 function resetRenovFilters(){document.querySelectorAll('#fVence .ms-option.selected, #fVencStatus .ms-option.selected').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('#fVence .ms-trigger, #fVencStatus .ms-trigger').forEach(t=>t.innerHTML='Todos');applyFilters();}
 function resetFilters(){document.querySelectorAll('.ms-option.selected').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.ms-trigger').forEach(t=>t.innerHTML='Todos');document.querySelectorAll('.filter-date').forEach(d=>d.value='');document.getElementById('tagsArea').innerHTML='<div class="filter-tag neutral">Nenhum filtro ativo</div>';renderAll(MERGED);}
 function aggregate(rows){const a={total:rows.length,funil:{},faixaProg:{},niveis:{},fontes:{},presVals:[],concVals:[],comAcesso:0,semAcesso:0,faixaDias:{},comGPS:0,semGPS:0,aulasComp:{},totalAulas:{},turmas:{},acessosMes:[]};rows.forEach(r=>{if(r.funil)a.funil[r.funil]=(a.funil[r.funil]||0)+1;if(r.nivel)a.niveis[r.nivel]=(a.niveis[r.nivel]||0)+1;a.fontes[r.fonte]=(a.fontes[r.fonte]||0)+1;if(r.turma)a.turmas[r.turma]=(a.turmas[r.turma]||0)+1;if(r.presenca!=null)a.presVals.push(r.presenca);if(r.conclusao!=null)a.concVals.push(r.conclusao);if(r.nivel){if(!a.aulasComp[r.nivel])a.aulasComp[r.nivel]=[];if(!a.totalAulas[r.nivel])a.totalAulas[r.nivel]=[];if(r.aulasComp!=null)a.aulasComp[r.nivel].push(r.aulasComp);if(r.totalAulas!=null)a.totalAulas[r.nivel].push(r.totalAulas);}if(r.primAcesso)a.comAcesso++;else a.semAcesso++;if(r.temGPS)a.comGPS++;else a.semGPS++;if(r.qtdAcessos>=0&&r.dtCompra){const dd=Math.max(Math.floor((TODAY_MS-r.dtCompra)/86400000),1);a.acessosMes.push(r.qtdAcessos/Math.max(dd/30,1));}if(r.ultAcesso){const d=Math.floor((TODAY_MS-r.ultAcesso)/86400000);const fd=d<=14?'0-14d':d<=30?'15-30d':d<=60?'31-60d':'>60d';a.faixaDias[fd]=(a.faixaDias[fd]||0)+1;}if(r.presenca!=null){const p=r.presenca;const fp=p===0?'0':p<=10?'1-10':p<=20?'11-20':p<=30?'21-30':p<=40?'31-40':p<=50?'41-50':p<=60?'51-60':p<=70?'61-70':p<=80?'71-80':p<=90?'81-90':'91-100';a.faixaProg[fp]=(a.faixaProg[fp]||0)+1;}});return a;}
@@ -282,12 +283,21 @@ function renderAll(rows){
   const pctSemAcesso=a.total>0?rd(a.semAcesso/a.total*100):0;
   const emailsUnicos=new Set();rows.forEach(r=>{if(r.email)emailsUnicos.add(r.email);});
 
+  // Contar alunos em mais de 1 produto
+  const emailProdutos={};
+  rows.forEach(r=>{if(r.email){if(!emailProdutos[r.email])emailProdutos[r.email]=new Set();emailProdutos[r.email].add(r.nivel);}});
+  const emMaisDe1=Object.values(emailProdutos).filter(s=>s.size>1).length;
+
   // ===== TAB 1: VISAO GERAL =====
   let h='<div class="kpis">';
-  h+=kpiCard('linear-gradient(90deg,var(--accent),var(--a2))','Total Alunos',fmtN(emailsUnicos.size),'em '+fmtN(a.total)+' registros','var(--a2)');
+  h+=kpiCard('linear-gradient(90deg,var(--accent),var(--a2))','Alunos Unicos',fmtN(emailsUnicos.size),'em '+fmtN(a.total)+' registros','var(--a2)');
   h+=kpiCard('linear-gradient(90deg,var(--teal),var(--green))','Media Progresso',fmtP(avgProg),'','var(--teal)');
   h+=kpiCard('linear-gradient(90deg,var(--sky),var(--cyan))','Acessos / Mes',avgAcsMes.toFixed(1).replace('.',','),'media mensal','var(--sky)');
   h+=kpiCard('linear-gradient(90deg,var(--red),var(--pink))','Nunca Acessaram',fmtP(pctSemAcesso),a.semAcesso+' alunos','var(--red)');
+  h+='</div>';
+  h+='<div class="kpis" style="margin-top:16px">';
+  h+=kpiCard('linear-gradient(90deg,var(--green),var(--teal))','Em Outros Produtos',fmtN(emMaisDe1),'alunos em 2+ produtos','var(--green)');
+  h+=kpiCard('linear-gradient(90deg,var(--gold),var(--orange))','Total Registros',fmtN(a.total),'THB: '+(a.fontes.THB||0)+' · MCC: '+(a.fontes.MCC||0),'var(--gold)');
   h+='</div>';
 
   // Distribuicao por Nivel
@@ -578,10 +588,11 @@ async function loadData(){
     TODAY_MS=d.todayMs;
     document.getElementById('badgeUpdated').textContent='Atualizado: '+d.atualizado;
     mergeData();
-    const niveis=new Set(),funis=new Set();
-    MERGED.forEach(r=>{if(r.nivel)niveis.add(r.nivel);if(r.funil)funis.add(r.funil);});
+    const niveis=new Set(),funis=new Set(),turmas=new Set();
+    MERGED.forEach(r=>{if(r.nivel)niveis.add(r.nivel);if(r.funil)funis.add(r.funil);if(r.turma)turmas.add(r.turma);});
     buildMS('fNivel',[...niveis].sort());
     buildMS('fFunil',funilOrder.filter(f=>funis.has(f)).concat([...funis].filter(f=>!funilOrder.includes(f))));
+    buildMS('fTurma',[...turmas].sort((a,b)=>{const na=parseInt(a.replace(/\D/g,'')),nb=parseInt(b.replace(/\D/g,''));return(isNaN(na)?999:na)-(isNaN(nb)?999:nb);}));
     buildMS('fVence',['30 dias','60 dias','90 dias','+120 dias']);
     buildMS('fVencStatus',['Vencido','A vencer']);
     renderAll(MERGED);
