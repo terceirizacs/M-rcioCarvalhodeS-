@@ -316,7 +316,7 @@ function renderAll(rows){
   h+='</div>';
   h+='<div class="kpis" style="margin-top:16px">';
   h+=kpiCard('linear-gradient(90deg,var(--green),var(--teal))','Em Outros Produtos',fmtN(emMaisDe1),'alunos em 2+ produtos','var(--green)');
-  h+=kpiCard('linear-gradient(90deg,var(--gold),var(--orange))','Total Registros',fmtN(a.total),'THB: '+(a.fontes.THB||0)+' · MCC: '+(a.fontes.MCC||0),'var(--gold)');
+  h+=kpiCard('linear-gradient(90deg,var(--gold),var(--orange))','Total Registros',fmtN(a.total),'THB: '+(a.fontes.THB||0)+' · MCC: '+(a.fontes.MCC||0)+' · CS: '+(a.fontes.CS||0),'var(--gold)');
   h+='</div>';
 
   // Distribuição por Nível
