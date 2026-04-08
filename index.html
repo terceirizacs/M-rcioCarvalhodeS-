@@ -520,7 +520,7 @@ function renderRenovacao(rows){
   h+='</div>';
 
   const todasComVenc=filtered.filter(r=>r._dtVencCalc);
-  _urgData=todasComVenc.map(r=>({nome:r.nome||'-',nivel:r.nivel||'-',funil:r.funil||'-',prog:r.presenca||0,ultAcesso:r.ultAcesso?new Date(r.ultAcesso):null,ultAcessoStr:r.ultAcesso?new Date(r.ultAcesso).toLocaleDateString('pt-BR'):'-',diasRenov:r._diasRenov||0}));
+  _urgData=todasComVenc.map(r=>{const fn=r.funil&&funilOrder.includes(r.funil)?r.funil:'-';return{nome:r.nome||'-',nivel:r.nivel||'-',funil:fn,prog:r.presenca||0,ultAcesso:r.ultAcesso?new Date(r.ultAcesso):null,ultAcessoStr:r.ultAcesso?new Date(r.ultAcesso).toLocaleDateString('pt-BR'):'-',diasRenov:r._diasRenov||0};});
   _urgPage=0;_urgSearch='';
   if(todasComVenc.length){h+='<div class="sec">Detalhamento ('+fmtN(todasComVenc.length)+')</div><div id="urgTableWrap"></div>';}
 
@@ -573,7 +573,8 @@ function renderDetalhamento(rows){
   _detData=rows.map(r=>{
     const prog=r.presenca!=null?r.presenca:0;
     const ult=r.ultAcesso?new Date(r.ultAcesso):null;
-    return{nome:r.nome||'-',nivel:r.nivel||'-',turma:r.turma||'-',prog:prog,aulasComp:r.aulasComp||0,totalAulas:r.totalAulas||0,ultAcesso:ult,ultAcessoStr:ult?ult.toLocaleDateString('pt-BR'):'-',funil:r.funil||'-',temGPS:r.temGPS,fonte:r.fonte};
+    const fn=r.funil&&funilOrder.includes(r.funil)?r.funil:'-';
+    return{nome:r.nome||'-',nivel:r.nivel||'-',turma:r.turma||'-',prog:prog,aulasComp:r.aulasComp||0,totalAulas:r.totalAulas||0,ultAcesso:ult,ultAcessoStr:ult?ult.toLocaleDateString('pt-BR'):'-',funil:fn,temGPS:r.temGPS,fonte:r.fonte};
   });
   _detPage=0;_detSearch='';drawDetTable();
 }
