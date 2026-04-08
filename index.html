@@ -296,6 +296,12 @@ function renderAll(rows){
   const pctSemAcesso=a.total>0?rd(a.semAcesso/a.total*100):0;
   const emailsUnicos=new Set();rows.forEach(r=>{if(r.email)emailsUnicos.add(r.email);});
 
+  // Contar alunos únicos que nunca acessaram
+  const emailAcesso={};
+  rows.forEach(r=>{if(r.email){if(!emailAcesso[r.email])emailAcesso[r.email]=false;if(r.primAcesso)emailAcesso[r.email]=true;}});
+  const unicosSemAcesso=Object.values(emailAcesso).filter(v=>!v).length;
+  const pctUnicosSemAcesso=emailsUnicos.size>0?rd(unicosSemAcesso/emailsUnicos.size*100):0;
+
   // Contar alunos em mais de 1 produto
   const emailProdutos={};
   rows.forEach(r=>{if(r.email){if(!emailProdutos[r.email])emailProdutos[r.email]=new Set();emailProdutos[r.email].add(r.nivel);}});
@@ -303,10 +309,10 @@ function renderAll(rows){
 
   // ===== TAB 1: VISAO GERAL =====
   let h='<div class="kpis">';
-  h+=kpiCard('linear-gradient(90deg,var(--accent),var(--a2))','Alunos Unicos',fmtN(emailsUnicos.size),'em '+fmtN(a.total)+' registros','var(--a2)');
+  h+=kpiCard('linear-gradient(90deg,var(--accent),var(--a2))','Alunos Únicos',fmtN(emailsUnicos.size),'em '+fmtN(a.total)+' registros','var(--a2)');
   h+=kpiCard('linear-gradient(90deg,var(--teal),var(--green))','Média Progresso',fmtP(avgProg),'','var(--teal)');
-  h+=kpiCard('linear-gradient(90deg,var(--sky),var(--cyan))','Acessos / Mes',avgAcsMes.toFixed(1).replace('.',','),'media mensal','var(--sky)');
-  h+=kpiCard('linear-gradient(90deg,var(--red),var(--pink))','Nunca Acessaram',fmtP(pctSemAcesso),a.semAcesso+' alunos','var(--red)');
+  h+=kpiCard('linear-gradient(90deg,var(--sky),var(--cyan))','Acessos / Mês',avgAcsMes.toFixed(1).replace('.',','),'média mensal','var(--sky)');
+  h+=kpiCard('linear-gradient(90deg,var(--red),var(--pink))','Nunca Acessaram',fmtP(pctUnicosSemAcesso),fmtN(unicosSemAcesso)+' alunos únicos','var(--red)');
   h+='</div>';
   h+='<div class="kpis" style="margin-top:16px">';
   h+=kpiCard('linear-gradient(90deg,var(--green),var(--teal))','Em Outros Produtos',fmtN(emMaisDe1),'alunos em 2+ produtos','var(--green)');
